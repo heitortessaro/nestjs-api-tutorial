@@ -24,6 +24,7 @@ export class AuthService {
       return user;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        //  find all erros codes provided by prisma: https://www.prisma.io/docs/reference/api-reference/error-reference#error-codes
         if (error.code === 'P2002') {
           throw new ForbiddenException(
             'Credentials taken. There is a unique constraint violation',
