@@ -8,10 +8,8 @@ export class UserController {
   // The useGuard use the authGuard, which is implementing the jwt strategy
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
+  // the Request comes from Express. It enables to access the request data
   getMe(@Req() req: Request) {
-    console.log({
-      user: req.user,
-    });
-    return 'user info';
+    return req.user;
   }
 }
