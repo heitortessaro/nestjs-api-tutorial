@@ -5,7 +5,8 @@ import { PrismaService } from '../src/prisma/prisma.service';
 // pactum is a request making library, so it need a server/api to make these requests
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
-import { EditUserDto } from 'src/user/dto';
+import { EditUserDto } from '../src/user/dto';
+import { CreateBookmarkDto } from '../src/bookmark/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -153,7 +154,26 @@ describe('App e2e', () => {
           .expectBody([]);
       });
     });
-    describe('Create bookmark', () => { });
+    describe('Create bookmark', () => {
+      const dto: CreateBookmarkDto = {
+        title: 'First Bookmark',
+        link: 'www.google.com',
+        description: 'research engine',
+      };
+      it('should create bookmark', () => {
+        return pactum
+          .spec()
+          .post('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .withBody(dto)
+          .expectStatus(201)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.link)
+          .expectBodyContains(dto.description);
+      });
+    });
     describe('Get bookmark by id', () => { });
     describe('Get bookmark by id', () => { });
     describe('Edit bookmark by id', () => { });
