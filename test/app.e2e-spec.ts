@@ -43,7 +43,7 @@ describe('App e2e', () => {
     };
 
     describe('Signup', () => {
-      it('should throw if email is empty', () => {
+      it('should throw if  email is empty', () => {
         return pactum
           .spec()
           .post('/auth/signup')
@@ -141,6 +141,18 @@ describe('App e2e', () => {
   });
 
   describe('Bookmarks', () => {
+    describe('Get empty bookmarks', () => {
+      it('should get bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .expectStatus(200)
+          .expectBody([]);
+      });
+    });
     describe('Create bookmark', () => { });
     describe('Get bookmark by id', () => { });
     describe('Get bookmark by id', () => { });
