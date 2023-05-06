@@ -6,7 +6,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from '../src/user/dto';
-import { CreateBookmarkDto } from '../src/bookmark/dto';
+import { CreateBookmarkDto, EditBookmarkDto } from '../src/bookmark/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -143,7 +143,7 @@ describe('App e2e', () => {
 
   describe('Bookmarks', () => {
     describe('Get empty bookmarks', () => {
-      it('should get bookmarks', () => {
+      it('should get empty bookmarks', () => {
         return pactum
           .spec()
           .get('/bookmarks')
@@ -199,12 +199,50 @@ describe('App e2e', () => {
           })
           .expectStatus(200)
           .expectBodyContains('$S{bookmarkId}')
-          .expectBodyContains('$S{bookmarkTitle}')
-          .inspect();
+          .expectBodyContains('$S{bookmarkTitle}');
       });
     });
 
-    describe('Edit bookmark by id', () => { });
-    describe('Delete bookmark by id', () => { });
+    describe('Edit bookmark by id', () => {
+      const dto: EditBookmarkDto = {
+        title: 'google',
+      };
+      it('should edit bookmark by id', () => {
+        return pactum
+          .spec()
+          .patch('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.title);
+      });
+    });
+
+    describe('Delete bookmark by id', () => {
+      it('should delete bookmark by id', () => {
+        return pactum
+          .spec()
+          .delete('/bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .expectStatus(204);
+      });
+
+      it('should get empty bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(0);
+      });
+    });
   });
 });
