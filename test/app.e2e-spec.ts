@@ -154,7 +154,7 @@ describe('App e2e', () => {
           .expectBody([]);
       });
     });
-    describe('Create bookmark', () => {
+    describe('Create bookmarks', () => {
       const dto: CreateBookmarkDto = {
         title: 'First Bookmark',
         link: 'www.google.com',
@@ -171,11 +171,36 @@ describe('App e2e', () => {
           .expectStatus(201)
           .expectBodyContains(dto.title)
           .expectBodyContains(dto.link)
-          .expectBodyContains(dto.description);
+          .expectBodyContains(dto.description)
+          .stores('bookmarkId', 'id');
       });
     });
-    describe('Get bookmark by id', () => { });
-    describe('Get bookmark by id', () => { });
+    describe('Get bookmarks', () => {
+      it('should get bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(1);
+      });
+    });
+    describe('Get bookmark by id', () => {
+      it('should get bookmark by id', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks/{id}')
+          .withPathParams('id', '${bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAthorizationToken}',
+          })
+          .expectStatus(200)
+          .expectJsonLength(1);
+      });
+    });
+
     describe('Edit bookmark by id', () => { });
     describe('Delete bookmark by id', () => { });
   });
