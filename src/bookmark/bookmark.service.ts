@@ -5,8 +5,8 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) { }
-  getBookmarks(userId: number) {
-    return this.prisma.bookmark.findMany({
+  async getBookmarks(userId: number) {
+    return await this.prisma.bookmark.findMany({
       where: {
         userId,
       },
@@ -15,7 +15,15 @@ export class BookmarkService {
 
   getBookmarkById(userId: number, bookmarkId: number) { }
 
-  createBookmark(userId: number, dto: CreateBookmarkDto) { }
+  async createBookmark(userId: number, dto: CreateBookmarkDto) {
+    const bookmark = await this.prisma.bookmark.create({
+      data: {
+        userId,
+        ...dto,
+      },
+    });
+    return bookmark;
+  }
 
   editBookmarkById(userId: number, bookmarkId: number, dto: EditBookmarkDto) { }
 
