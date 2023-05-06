@@ -172,7 +172,8 @@ describe('App e2e', () => {
           .expectBodyContains(dto.title)
           .expectBodyContains(dto.link)
           .expectBodyContains(dto.description)
-          .stores('bookmarkId', 'id');
+          .stores('bookmarkId', 'id')
+          .stores('bookmarkTitle', 'title');
       });
     });
     describe('Get bookmarks', () => {
@@ -187,17 +188,19 @@ describe('App e2e', () => {
           .expectJsonLength(1);
       });
     });
-    describe('Get bookmark by id', () => {
+    describe('Get  bookmark by id', () => {
       it('should get bookmark by id', () => {
         return pactum
           .spec()
           .get('/bookmarks/{id}')
-          .withPathParams('id', '${bookmarkId}')
+          .withPathParams('id', '$S{bookmarkId}')
           .withHeaders({
             Authorization: 'Bearer $S{userAthorizationToken}',
           })
           .expectStatus(200)
-          .expectJsonLength(1);
+          .expectBodyContains('$S{bookmarkId}')
+          .expectBodyContains('$S{bookmarkTitle}')
+          .inspect();
       });
     });
 
